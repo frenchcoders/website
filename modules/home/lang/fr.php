@@ -2,7 +2,7 @@
 # * * * * * * * * * * * * * * * * * * * * * * * *
 # ENTREES DE LANGUE RELATIVES AU MODULE HOMEPAGE
 # * * * * * * * * * * * * * * * * * * * * * * * *
-$_Lang = [
+$_L= [
 
 ];
 ?>
