@@ -158,34 +158,21 @@ class Templates {
      * @param $matches Tableau des valeurs matchées par preg_replace_callback
      * @return URL générée depuis la classe Modules. */
     public function _url($matches) {
-        global $_Modules;
-        # @FIX : Remplacer les simple quotes par des doubles quotes pour
-        # dans les données de paramètres GET pour permettre le parsage en temps
-        # que données JSON -
-        if(isset($matches[5])):
-            $matches[5] = str_replace("'", '"', $matches[5]);
-        endif;
+		global $_Modules;
+		# @FIX : Remplacer les simple quotes par des doubles quotes pour
+		# dans les données de paramètres GET pour permettre le parsage en temps
+		# que données JSON -
+		if(isset($matches[5])):
+			$matches[5] = str_replace("'", '"', $matches[5]);
+		endif;
 
-        return $_Modules->url($matches[1], # Nom du module
-                              $matches[2], # Bool admin ou client-side
-                              (isset($matches[3]) ? $matches[3]:''), # Contexte (optionel)
-                              (isset($matches[4]) ? $matches[4]:0), # Prise en charge du subcontext DELETE (opt)
-                              (isset($matches[5]) ? $matches[5]:0), # Id d'un élément précis (optionel)
-                              (isset($matches[6]) ? json_decode($matches[6], true):[]) # Tableau de paramètres au format JSON (opt)
-                             );
-    }
-
-
-	/**
-	  * Callback pour le remplacement des elements de texte dans les fichiers de template.
-	  * @parem $matches Tableau des valeurs matchées par preg_replace_callback
-	  * @return Contenu relatif à l'élémént de texte */
-	public function _text($matches) {
-		global $_TextElementsObj;
-		# Retourner l'élément de texte demandé
-		$d = $_TextElementsObj->where([['title', $matches[1]], ['locale', strtolower(LOCALE)]])
-							  ->fetch()[0]['content'];
-		return ($d != false && !empty($d)) ? nl2br(htmlspecialchars($d)):'[Text element not found]';
+		return $_Modules->url($matches[1], # Nom du module
+							  $matches[2], # Bool admin ou client-side
+							  (isset($matches[3]) ? $matches[3]:''), # Contexte (optionel)
+							  (isset($matches[4]) ? $matches[4]:0), # Prise en charge du subcontext DELETE (opt)
+							  (isset($matches[5]) ? $matches[5]:0), # Id d'un élément précis (optionel)
+							  (isset($matches[6]) ? json_decode($matches[6], true):[]) # Tableau de paramètres au format JSON (opt)
+						  	 );
 	}
 	# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -200,27 +187,25 @@ class Templates {
 	  * @param string $buffer Tampon sous forme d'une chaine de caractères
 	  * @return string Tampon sous forme d'une chaine de caractères traité par le parseur. */
     public function _parse($buffer) {
+
 		# * * * * * * * * * * * * * * * * * * * * * * *
 		# TRAITEMENT DES TAGS SPECIFIQUES AUX TEMPLATES
 		# * * * * * * * * * * * * * * * * * * * * * * *
         $langPattern = '#_l\(([a-z0-9-_]+)\)#isU'; # pattern d'un élément de langue
-		$textPattern = '#_text\(([a-z0-9-_]+)\)#isU'; # pattern d'un élément de texte en base de données
 
         # Pattern d'un élément d'url
         $urlPattern = '#_url\( {0,}'
-                              . '([a-z0-9-_]+) {0,}, {0,}' # Nom du module
-                              . '([0-9]+)' # Bool admin ou client-side
-                              . '(?: {0,}, {0,}([a-z0-9-_]+)){0,1}' # Contexte (optionel)
-                              . '(?: {0,}, {0,}([0-9]+)){0,1}' # Prise en charge subcontext DELETE
-                              . '(?: {0,}, {0,}([0-9]+)){0,1}' # Id d'un élément précis (optionel)
-                              . '(?: {0,}, {0,}(\{(?:.+)\})){0,1}' # Tableau de paramtres au format JSON
-                    . ' {0,}\)#isU';
-		# - - - - - - - - - -
+					. '([a-z0-9-_]+) {0,}, {0,}' # Nom du module
+					. '([0-9]+)' # Bool admin ou client-side
+					. '(?: {0,}, {0,}([a-z0-9-_]+)){0,1}' # Contexte (optionel)
+					. '(?: {0,}, {0,}([0-9]+)){0,1}' # Prise en charge subcontext DELETE
+					. '(?: {0,}, {0,}([0-9]+)){0,1}' # Id d'un élément précis (optionel)
+					. '(?: {0,}, {0,}(\{(?:.+)\})){0,1}' # Tableau de paramtres au format JSON
+					. ' {0,}\)#isU';
 
 		# Capture et remplacements
-        $buffer = preg_replace_callback($langPattern, [$this, '_lang'], $buffer); #  _l(name)
-        $buffer = preg_replace_callback($urlPattern, [$this, '_url'], $buffer);
-		$buffer = preg_replace_callback($textPattern, [$this, '_text'], $buffer);
+		$buffer = preg_replace_callback($langPattern, [$this, '_lang'], $buffer); #  _l(name)
+		$buffer = preg_replace_callback($urlPattern, [$this, '_url'], $buffer);
 
 		# SI LES CONDITIONS SONT REMPLIES, ON MET EN CACHE LES ELEMENTS GENERES
 		# POUR MNIMISER LE TEMPS DE GENERATION DES PAGES
@@ -229,7 +214,7 @@ class Templates {
 		endif;
 		return $buffer;
 	}
-	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 
 	# * * * * * * * * * * * *
@@ -241,50 +226,49 @@ class Templates {
 	  * @TODO Revoir le système de l'overwrite pour qu'il soit défini en statique et le même pour toutes
 	  * les instances via le fichier config.ini de la librairie templates.
 	  * */
-    public function render() {
+	public function render() {
 
 		if(!TEMPLATES_CACHE || !$this->cacheFileName || !$this->loadFromCache):
+
 			# * * * * * * * * * * * *
 			# GENERATION DU TEMPLATE
 			# * * * * * * * * * * * *
 
 			# Variables calquées sur les données prévues pour être accessibles aux templates
-	        extract($this->vars);
-	        extract(self::$globals);
-			# - - - - - - - - - -
+			extract(self::$globals);
+			extract($this->vars);
 
 			# Exploiter tous les fichiers dans l'ordre des déclarations
 			# On décompose le chemin du template pour ne garder que le nom de fichers
-	        foreach($this->files as $v):
+			foreach($this->files as $v):
 
-	            $parts = explode('/', $v);
-	            $tplName = $parts[count($parts)-1];
-	            $excluded = ['header.tpl.php', 'footer.tpl.php', 'nav.tpl.php']; # fichiers exclus et ne pouvant pas être écrasés
+				$parts = explode('/', $v);
+				$tplName = $parts[count($parts)-1];
+				$excluded = ['header.tpl.php', 'footer.tpl.php', 'nav.tpl.php']; # fichiers exclus et ne pouvant pas être écrasés
 
-	            if(!in_array($tplName, $excluded)):
+				if(!in_array($tplName, $excluded)):
 
-	                # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	                # SUPPORT DE L'OVERWRITE DES FICHIERS DE TEMPLATES PREDEFINIS
-	                # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	                $supposed = 'templates/overwrite/' . $tplName;
-	                if(is_file($supposed)):
-	                    # Un fichier de template overwrite le fichier original
-	                    include($supposed);
+					# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+					# SUPPORT DE L'OVERWRITE DES FICHIERS DE TEMPLATES PREDEFINIS
+					# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+					$supposed = 'templates/overwrite/' . $tplName;
+					if(is_file($supposed)):
+						# Un fichier de template overwrite le fichier original
+						include($supposed);
 					else:
 						# Sinon, on charge le fichier original
 						include($v);
-	 				endif;
-	            else:
-	                # On charge un fichier de structure (header, footer, nav..)
-	                include($v);
-	            endif;
+					endif;
+				else:
+					# On charge un fichier de structure (header, footer, nav..)
+					include($v);
+				endif;
 			endforeach;
 
-	        # @NOTE : Après l'inclusion de tous les fichiers, on libère le tampon
-	        # ce qui a pour effet d'appeller la fonction de callback Templates::_parse()
-	        # pour déclancher les opérations de remplacement.
-	        ob_end_flush();
-		# - - - - - - - - - - - - - - - - -
+			# @NOTE : Après l'inclusion de tous les fichiers, on libère le tampon
+			# ce qui a pour effet d'appeller la fonction de callback Templates::_parse()
+			# pour déclancher les opérations de remplacement.
+			ob_end_flush();
 
 		else:
 			# * * * * * * * * * * * * * *
@@ -303,27 +287,32 @@ class Templates {
 	/** Retourne le contenu d'un fichier de cache dans le fichier dont le nom est précisé par l'instance.
  	  * @return string Contenu du fichier de cache. */
 	public function getCache() {
+
 		if($this->cacheFileName !== 0):
 			# Il est absolument nécéssaire qu'un nom de fichier de cache soit explicité
 			$supposedToReadFile = TEMPLATES_CACHE_DIR . $this->cacheFileName;
 			if(is_file($supposedToReadFile)):
 				return file_get_contents($supposedToReadFile);
 			endif;
+
 		else:
 			return 0;
 		endif;
+
 	}
 
 	/** Mettre en cache le contenu précisé par $content dans le fichier précisé par la variable $content
-  	  * dans le fichier dont le nom est précisé par l'instance.
-   	  * @return bool Success / Echec */
+	  * dans le fichier dont le nom est précisé par l'instance.
+	  * @return bool Success / Echec */
 	public function setCache($content) {
+
 		if($this->cacheFileName):
 			$supposedToWriteFile = TEMPLATES_CACHE_DIR . $this->cacheFileName;
 			$handler = fopen($supposedToWriteFile, 'w');
 			$d = fwrite($handler, $content); # écriture
 			fclose($handler);
 			return $d;
+			
 		else:
 			return 0;
 		endif;
