@@ -24,7 +24,7 @@ if(isset($_GET['module'])):
 		# * * * * * * * * *
 		# ENTREES DE LANGUE
 		# * * * * * * * * *
-		$_Lang->load(MODULES_DIR_PATH . 'lang/');
+		$_Lang->load(MODULES_DIR_PATH . $_GET['module'] . '/lang/');
 
 	# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 	else:
