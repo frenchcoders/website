@@ -18,6 +18,9 @@ define('STATIC_DIR_PATH', 'static/');
 define('DEBUG', 1);
 define('LOCALE', 'fr');
 
+define('TEMPLATES_CACHE', 0);
+define('TEMPLATES_CACHE_DIR', 'static/cache/templates/');
+
 define('DB_HOST', 'localhost');
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', 'm0li3re');
