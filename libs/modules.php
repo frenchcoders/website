@@ -3,8 +3,6 @@
 # ACQUERIR DES INFORMATIONS SUR LES MODULES DISPONIBLES POUR LE PROJET
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 namespace FrenchCoders\Core;
-use FrenchCOders\Core\Utils;
-use \PDO;
 use \Exception;
 
 /**
