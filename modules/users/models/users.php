@@ -274,7 +274,7 @@ class Users {
         		return false;
     		else:
        			$redirection = (($redirection != 0) ? $redirection:$this->redirection);
-			if(!$this->isAdmin()):
+				if(!$this->isAdmin()):
 				    # Insuffisance de permissions, redirection
           			header('Location: ' . $redirection);
           			exit(); # fin d'éxécution
