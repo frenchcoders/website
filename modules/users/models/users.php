@@ -209,7 +209,7 @@ class Users {
 	# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 
-	/** Renvoi le status des droits d'administration.
+	/** Renvoit le status des droits d'administration.
 	  * @return bool Renvoi true si l'utilisateur a les droits d'administration, false sinon. */
  	public function isAdmin() {
 
@@ -272,14 +272,14 @@ class Users {
 
 		if(!$redirection && $this->redirection == NULL):
         		return false;
-    		else:
-       			$redirection = (($redirection != 0) ? $redirection:$this->redirection);
-				if(!$this->isAdmin()):
-				    # Insuffisance de permissions, redirection
-          			header('Location: ' . $redirection);
-          			exit(); # fin d'éxécution
-       			endif;
-    		endif;
+		else:
+   			$redirection = (($redirection != 0) ? $redirection:$this->redirection);
+			if(!$this->isAdmin()):
+			    # Insuffisance de permissions, redirection
+      			header('Location: ' . $redirection);
+      			exit(); # fin d'éxécution
+   			endif;
+		endif;
 	}
 	# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
