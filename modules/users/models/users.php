@@ -2,11 +2,11 @@
 # * * * * * * * * * * * * * * * * * * * * * *
 # MODELE PRINCIPAL DU MODULE " UTILISATEURS "
 # * * * * * * * * * * * * * * * * * * * * * *
-namespace Fragment\Modules\Users;
+namespace FrenchCoders\Modules\Users;
 use \PDO;
 use \Exception;
 use \session_statuts;
-use Fragment\Core\Utils;
+use FrenchCoders\Core\Utils;
 
 /**
   * Modèle principal du module " Utilisateurs " pour
